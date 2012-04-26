@@ -6,8 +6,8 @@ require 'tempfile'
 module FluentLoggerRails
 describe Logger do
 
-if RUBY_VERSION < "1.9.2"
-  pending "fluentd only works in Ruby 1.9.2"
+if RUBY_VERSION < '1.9.2'
+  pending 'fluentd only works in Ruby 1.9.2'
 else
 
   require 'fluent/load'
@@ -49,7 +49,7 @@ else
   #   output.emits.clear rescue nil
   # end
 
-  context "running fluentd" do
+  context 'running fluentd' do
     before(:each) do
       tmp = Tempfile.new('fluent-logger-config')
       tmp.close(false)
@@ -57,10 +57,10 @@ else
       File.open(tmp.path, 'w') { |f|
         f.puts <<EOF
 <source>
-  type tcp
+  type forward
   port #{fluentd_port}
 </source>
-<match #{appname}.**>
+<match **>
   type test
 </match>
 EOF
@@ -82,7 +82,7 @@ EOF
       @thread.join
     end
 
-    context "logging to fluentd" do
+    context 'logging to fluentd' do
       before(:each) do
         @options = {
           :host     => fluentd_host,
@@ -92,50 +92,52 @@ EOF
         @logger = Logger.new(@options)
       end
 
-       it "should add something to the log with the :debug level" do
-        @logger.debug("DEBUG!").should be_true
-        queue.last.should == [fluentd_tag, { :log => { "text" => "DEBUG!", "level" => "DEBUG" }}]
+      it 'should add something to the log with the :debug level' do
+        @logger.debug('DEBUG!').should be_true
+        queue.last.should == [fluentd_tag, { :log => { 'text' => 'DEBUG!', 'level' => 'DEBUG' }}]
       end
 
-      it "should add something to the log with the :info level" do
-        @logger.info("INFO!").should be_true
-        queue.last.should == [fluentd_tag, { :log => { "text" => "INFO!", "level" => "INFO" }}]
+      it 'should add something to the log with the :info level' do
+        @logger.info('INFO!').should be_true
+        queue.last.should == [fluentd_tag, { :log => { 'text' => 'INFO!', 'level' => 'INFO' }}]
       end
 
-      it "should add something to the log with the :warn level" do
-        @logger.warn("WARN!").should be_true
-        queue.last.should == [fluentd_tag, { :log => { "text" => "WARN!", "level" => "WARN" }}]
+      it 'should add something to the log with the :warn level' do
+        @logger.warn('WARN!').should be_true
+        queue.last.should == [fluentd_tag, { :log => { 'text' => 'WARN!', 'level' => 'WARN' }}]
       end
 
-      it "should add something to the log with the :error level" do 
-        @logger.error("ERROR!").should be_true
-        queue.last.should == [fluentd_tag, { :log => { "text" => "ERROR!", "level" => "ERROR" }}]
+      it 'should add something to the log with the :error level' do
+        @logger.error('ERROR!').should be_true
+        queue.last.should == [fluentd_tag, { :log => { 'text' => 'ERROR!', 'level' => 'ERROR' }}]
       end
 
-      it "should add something to the log with the :fatal level" do 
-        @logger.fatal("FATAL!").should be_true
-        queue.last.should == [fluentd_tag, { :log => { "text" => "FATAL!", "level" => "FATAL" }}]
+      it 'should add something to the log with the :fatal level' do
+        @logger.fatal('FATAL!').should be_true
+        queue.last.should == [fluentd_tag, { :log => { 'text' => 'FATAL!', 'level' => 'FATAL' }}]
       end
 
-      it "should add something to the log with the :unknown level" do 
-        @logger.unknown("UNKNOWN!").should be_true
-        queue.last.should == [fluentd_tag, { :log => { "text" => "UNKNOWN!", "level" => "UNKNOWN" }}]
+      it 'should add something to the log with the :unknown level' do
+        @logger.unknown('UNKNOWN!').should be_true
+        queue.last.should == [fluentd_tag, { :log => { 'text' => 'UNKNOWN!', 'level' => 'UNKNOWN' }}]
       end
-
-      it "should swap Rails 3.0 stable default logger by reading fluent_config.yml file" do 
-        `cd assets/rails3_tests/rails3_0_app/ && ruby -Itest test/functional/messages_controller_test.rb -n test_should_get_index`
-         queue.first.should == [fluentd_tag, { :log => { "text"=>"  Processing by MessagesController#index as HTML", "level"=>"INFO"}}]
-      end
-
-      it "should swap Rails 3.0 stable default logger by using ENV variables file" do 
-        `cd assets/rails3_tests/rails3_0_with_env/ && APPLICATION_NAME=#{appname} FLUENTD_HOST=#{fluentd_host} FLUENTD_PORT=#{fluentd_port} ruby -Itest test/functional/messages_controller_test.rb -n test_should_get_index`
-         queue.first.should == [fluentd_tag, { :log => { "text"=>"  Processing by MessagesController#index as HTML", "level"=>"INFO"}}]
-      end
-
     end
 
-  end
+    context 'replacing the default logger from Rails' do
+      it 'should swap of a Rails 3.0.9 stable default logger by reading fluent_config.yml file' do
+        Bundler.with_clean_env do
+          error = `cd spec/assets/rails3_tests/rails3_0_app/ && bundle exec ruby -Itest test/functional/messages_controller_test.rb -n test_should_get_index`
+        end
+      end
+      it 'should swap Rails 3.0.9 stable default logger by using ENV variables file' do
+        Bundler.with_clean_env do
+          `cd spec/assets/rails3_tests/rails3_0_with_env/ && APPLICATION_NAME=#{appname} FLUENTD_HOST=#{fluentd_host} FLUENTD_PORT=#{fluentd_port} bundle exec ruby -Itest test/functional/messages_controller_test.rb -n test_should_get_index`
+        end
+        queue.first.should == [fluentd_tag, { :log => { 'text'=>'  Processing by MessagesController#index as HTML', 'level'=>'INFO'}}]
+      end
+    end
 
-end # <= Ruby version check
-end
+    end
+    end # <= Ruby version check
+  end
 end
