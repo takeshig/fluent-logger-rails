@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_development_dependency "rspec"
-  s.add_runtime_dependency "fluentd"
   s.add_runtime_dependency "fluent-logger"
   s.add_runtime_dependency "rails"
 end

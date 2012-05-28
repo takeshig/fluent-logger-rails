@@ -17,7 +17,7 @@ In order to swap the Rails default logger, we require the railtie included
 in the gem so that it is loaded during Rails initialization process.
 
 ```ruby
-gem 'fluent-logger-rails', :require => 'fluent_logger_rails/railtie'
+gem 'fluent-logger-rails', :git => 'git://github.com/huacnlee/fluent-logger-rails.git'
 ```
 
 You will also need to specify the following on a ~config/fluent_logger.yml~
@@ -30,18 +30,11 @@ development:
   appname:     'rails3_test'
 ```
 
-Otherwise, you can set up the following environment variables when starting the rails server.
-By default, the port used by fluentd is 24224.
-
-```bash
-APPLICATION_NAME='appname' rails server thin
-```
-
 On the fluentd side, you will need to setup the proper configuration so that it matches
 the tag of your application. Example:
 
 ```conf
-<match appname.**>
+<match rails3_test.**>
    type stdout
 </match>
 ```

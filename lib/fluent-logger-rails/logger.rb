@@ -21,7 +21,8 @@ module FluentLoggerRails
     def add(severity, message=nil, progname=nil, &block)
       @last_message ||= []
       @last_message << message
-      if message.start_with?("Completed")
+      return if message.blank?
+      if message.match /^Completed/
         post_to_remote(severity, @last_message.join("\n"))
         @last_message = []
       end
