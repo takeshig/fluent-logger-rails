@@ -1,4 +1,4 @@
-require 'fluent_logger_rails'
+require 'fluent-logger-rails'
 require 'erb'
 
 class Railtie < Rails::Railtie
