@@ -20,7 +20,7 @@ in the gem so that it is loaded during Rails initialization process.
 gem 'fluent-logger-rails', :git => 'git://github.com/huacnlee/fluent-logger-rails.git'
 ```
 
-You will also need to specify the following on a ~config/fluent_logger.yml~
+You will also need to specify the following on a 'config/fluent_logger.yml'
 to connect to the fluentd process. You can also include erb tags to specify settings during runtime.
 
 ```yaml
@@ -28,6 +28,7 @@ development:
   fluent_host: '127.0.0.1'
   fluent_port: 24224
   appname:     'rails3_test'
+  debug:       true
 ```
 
 On the fluentd side, you will need to setup the proper configuration so that it matches
@@ -57,6 +58,16 @@ end
 
 ```bash
 rails3_test.stdout: { "text":"  Processing by MessagesController#index as HTML",  "level":"INFO" }
+```
+
+## Performance
+
+```
+# run Rails.logger.info("...3481+ chars")
+       user     system      total        real
+1 times  0.000000   0.000000   0.000000 (  0.000242)
+100 times  0.020000   0.000000   0.020000 (  0.023021)
+1000 times  0.180000   0.040000   0.220000 (  0.241728)
 ```
 
 ## Todo list

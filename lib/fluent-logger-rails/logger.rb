@@ -10,10 +10,11 @@ module FluentLoggerRails
     LOG_LEVEL_MAP      = ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'LEVEL']
 
     def initialize(options={}, level=DEBUG)
-      @level         = level || DEBUG
-      @port          = options[:port]
-      @host          = options[:host]
-      @appname       = options[:appname]
+      @level   = level || DEBUG
+      @port    = options[:port]
+      @host    = options[:host]
+      @appname = options[:appname]
+      @debug   = options[:debug]
 
       @fluent_logger = Fluent::Logger::FluentLogger.new(@appname, { :host => @host, :port => @port })
     end
@@ -26,7 +27,7 @@ module FluentLoggerRails
         post_to_remote(severity, @last_message.join("\n"))
         @last_message = []
       end
-      puts message
+      puts message if @debug
     end
 
     def flush; end

@@ -23,11 +23,13 @@ class Railtie < Rails::Railtie
         fluent_config = YAML.load(ERB.new(config_file.read).result)[Rails.env]
         settings = { :appname => fluent_config['appname'],
                      :host    => fluent_config['fluent_host'],
-                     :port    => fluent_config['fluent_port']}
+                     :port    => fluent_config['fluent_port'],
+                     :debug   => fluent_config['debug']}
       else
         settings = { :appname => ENV['APPLICATION_NAME'],
                      :host    => ENV['FLUENTD_HOST'],
-                     :port    => ENV['FLUENTD_PORT']  }
+                     :port    => ENV['FLUENTD_PORT'],
+                     :debug   => ENV['FLUENTD_DEBUG'] }
       end
 
       Rails.logger  = config.logger = create_logger(app_config, settings)
