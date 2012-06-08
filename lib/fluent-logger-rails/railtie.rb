@@ -5,11 +5,11 @@ class Railtie < Rails::Railtie
 
   def create_logger(config, options={})
     level  = ActiveSupport::BufferedLogger.const_get(config.log_level.to_s.upcase)
-    logger = FluentLoggerRails::Logger.new(options)
+    logger = ActiveSupport::TaggedLogging.new(FluentLoggerRails::Logger.new(options, level))
     logger.auto_flushing = false if Rails.env.production?
     logger
   rescue StandardError => e
-    logger       = ActiveSupport::BufferedLogger.new(STDERR)
+    logger       = ActiveSupport::TaggedLogging.new(ActiveSupport::BufferedLogger.new(STDERR, level))
     logger.level = ActiveSupport::BufferedLogger::WARN
     logger.warn("Problem initializing Fluent logger for Rails \n " + e.message + "\n" + e.backtrace.join('\n'))
     logger

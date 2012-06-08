@@ -32,9 +32,13 @@ module FluentLoggerRails
 
     def flush; end
 
-    def level; end
+    def level
+      @level
+    end
 
-    def level=(l); end
+    def level=(l)
+      @level = l
+    end
 
     def close
       @fluent_logger.close
